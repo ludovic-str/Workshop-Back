@@ -20,7 +20,8 @@ export default function RegisterForm() {
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="pseudo" label="Pseudo" />
+        <TextField name="firstName" label="First name" />
+        <TextField name="lastName" label="Last name" />
 
         <TextField name="email" label="Email address" />
 
