@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 // @mui
@@ -7,11 +8,14 @@ import { LoadingButton } from '@mui/lab';
 // components
 import { registerRequest } from '../../../api/auth';
 import Iconify from '../../../components/iconify';
+// store
+import { authActions } from '../../../store';
 
 // ----------------------------------------------------------------------
 
 export default function RegisterForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -43,6 +47,7 @@ export default function RegisterForm() {
         toast.success('Account created successfully', {
           autoClose: 2000,
         });
+        dispatch(authActions.login());
         localStorage.setItem('token', res.token);
         navigate('/dashboard', { replace: true });
       }

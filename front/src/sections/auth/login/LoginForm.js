@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
@@ -7,11 +8,14 @@ import { LoadingButton } from '@mui/lab';
 import { loginRequest } from '../../../api/auth';
 // components
 import Iconify from '../../../components/iconify';
+// store
+import { authActions } from '../../../store';
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
@@ -36,6 +40,7 @@ export default function LoginForm() {
           autoClose: 2000,
         });
         localStorage.setItem('token', res.token);
+        dispatch(authActions.login());
         navigate('/dashboard', { replace: true });
       }
     }

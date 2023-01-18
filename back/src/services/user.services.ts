@@ -26,8 +26,6 @@ const createUser = async (
     });
   }
 
-  console.log(firstname, lastname, email, password);
-
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -72,4 +70,19 @@ const loginUser = async (email: string, password: string): Promise<Token> => {
   return { token };
 };
 
-export default { createUser, loginUser };
+const getOneUser = async (id: number) => {
+  const user = await prisma.user.findUnique({ where: { id } });
+
+  if (user === null) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "user does not exist",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  return user;
+};
+
+export default { createUser, loginUser, getOneUser };

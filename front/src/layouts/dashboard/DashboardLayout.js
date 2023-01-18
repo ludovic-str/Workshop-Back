@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
+// api
+import { getMyUserInfos } from '../../api/auth';
 //
 import Header from './header';
 import Nav from './nav';
@@ -34,12 +36,21 @@ const Main = styled('div')(({ theme }) => ({
 
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const fetchMyInfos = async () => {
+      const data = await getMyUserInfos(localStorage.getItem('token'));
+      setUser(data);
+    };
+    fetchMyInfos();
+  }, []);
 
   return (
     <StyledRoot>
-      <Header onOpenNav={() => setOpen(true)} />
+      <Header onOpenNav={() => setOpen(true)} userInfos={user} />
 
-      <Nav openNav={open} onCloseNav={() => setOpen(false)} />
+      <Nav openNav={open} onCloseNav={() => setOpen(false)} userInfos={user} />
 
       <Main>
         <Outlet />
