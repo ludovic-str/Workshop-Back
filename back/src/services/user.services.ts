@@ -10,8 +10,8 @@ import ENV from "../env";
 const prisma = new PrismaClient();
 
 const createUser = async (
-  firstName: string,
-  lastName: string,
+  firstname: string,
+  lastname: string,
   email: string,
   password: string
 ): Promise<Token> => {
@@ -26,24 +26,20 @@ const createUser = async (
     });
   }
 
+  console.log(firstname, lastname, email, password);
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
     data: {
       email,
-      firstName,
-      lastName,
+      firstname,
+      lastname,
       password: hashedPassword,
-      tokensTable: { create: {} },
     },
   });
 
-  const exp = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
-
-  const token = jwt.sign(
-    { id: user.id, email, role: user.role, expTime: exp },
-    ENV.secret
-  );
+  const token = jwt.sign({ id: user.id, email }, ENV.secret);
 
   return { token };
 };
@@ -71,7 +67,7 @@ const loginUser = async (email: string, password: string): Promise<Token> => {
     });
   }
 
-  const token = jwt.sign({ id: user.id, email, role: user.role }, ENV.secret);
+  const token = jwt.sign({ id: user.id, email }, ENV.secret);
 
   return { token };
 };

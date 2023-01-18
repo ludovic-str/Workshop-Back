@@ -21,8 +21,8 @@ export default (
 ): void => {
   instance.post("/", async (req: RegisterRequest, res: FastifyReply) => {
     const token = await UserServices.createUser(
-      req.body.firstName,
-      req.body.lastName,
+      req.body.firstname,
+      req.body.lastname,
       req.body.email,
       req.body.password
     );

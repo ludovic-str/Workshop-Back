@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
 // hooks
+import { useNavigate } from 'react-router-dom';
 import useResponsive from '../hooks/useResponsive';
 // components
 import Logo from '../components/logo';
@@ -42,6 +43,11 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 export default function RegisterPage() {
   const mdUp = useResponsive('up', 'md');
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate('/login', { replace: true });
+  };
 
   return (
     <>
@@ -75,8 +81,8 @@ export default function RegisterPage() {
 
             <Typography variant="body2" sx={{ mb: 5 }}>
               Already have an account ? {''}
-              <Link variant="subtitle2" href="/login">
-                Login
+              <Link variant="subtitle2" onClick={handleNavigate} style={{ cursor: 'pointer' }}>
+                Sign in
               </Link>
             </Typography>
 
