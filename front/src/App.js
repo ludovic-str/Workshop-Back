@@ -1,4 +1,5 @@
 // routes
+import { useSelector } from 'react-redux';
 import Router from './routes';
 // theme
 import ThemeProvider from './theme';
@@ -9,11 +10,14 @@ import { StyledChart } from './components/chart';
 // ----------------------------------------------------------------------
 
 export default function App() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  console.log(isAuthenticated);
+
   return (
     <ThemeProvider>
       <ScrollToTop />
       <StyledChart />
-      <Router />
+      <Router loggedIn={isAuthenticated} />
     </ThemeProvider>
   );
 }

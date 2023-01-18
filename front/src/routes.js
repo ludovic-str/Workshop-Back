@@ -13,11 +13,12 @@ import RegisterPage from './pages/RegisterPage';
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router({ loggedIn }) {
+  console.log(loggedIn);
   const routes = useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: loggedIn === true ? <DashboardLayout /> : <Navigate to="/login" replace />,
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },

@@ -36,14 +36,14 @@ export default function RegisterForm() {
   };
 
   const handleClick = async () => {
-    if (firstName.length > 2 && lastName.length > 2 && email.length > 8 && password.length > 8) {
+    if (firstName.length > 2 && lastName.length > 2 && email.length > 6 && password.length > 8) {
       const res = await registerRequest(firstName, lastName, email, password);
 
-      toast.success('Account created successfully', {
-        autoClose: 2000,
-      });
-
       if (res) {
+        toast.success('Account created successfully', {
+          autoClose: 2000,
+        });
+        localStorage.setItem('token', res.token);
         navigate('/dashboard', { replace: true });
       }
     }
@@ -66,7 +66,7 @@ export default function RegisterForm() {
           value={lastName}
           error={lastName.length < 2}
         />
-        <TextField name="email" label="Email address" onChange={handleEmailChange} value={email} error={email < 8} />
+        <TextField name="email" label="Email address" onChange={handleEmailChange} value={email} error={email < 6} />
         <TextField
           name="password"
           label="Password"

@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ToastContainer } from 'react-toastify';
@@ -8,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
+import store from './store/index';
 
 // ----------------------------------------------------------------------
 
@@ -15,10 +17,12 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <HelmetProvider>
-    <BrowserRouter>
-      <ToastContainer />
-      <App />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <ToastContainer />
+        <App />
+      </BrowserRouter>
+    </Provider>
   </HelmetProvider>
 );
 

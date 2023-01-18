@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -26,15 +27,24 @@ export default function LoginForm() {
     setPassword(event.target.value);
   };
 
-  const handleClick = () => {
-    loginRequest(email, password);
-    // navigate('/dashboard', { replace: true });
+  const handleClick = async () => {
+    if (email.length > 6 && password.length > 8) {
+      const res = await loginRequest(email, password);
+
+      if (res) {
+        toast.success('Account created successfully', {
+          autoClose: 2000,
+        });
+        localStorage.setItem('token', res.token);
+        navigate('/dashboard', { replace: true });
+      }
+    }
   };
 
   return (
     <>
       <Stack spacing={3}>
-        <TextField name="email" label="Email address" value={email} onChange={handleEmailChange} />
+        <TextField name="email" label="Email address" value={email} onChange={handleEmailChange} error={email < 6} />
 
         <TextField
           name="password"
@@ -51,6 +61,7 @@ export default function LoginForm() {
               </InputAdornment>
             ),
           }}
+          error={password < 8}
         />
       </Stack>
 
