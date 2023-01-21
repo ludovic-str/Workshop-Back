@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
 // api
@@ -37,14 +37,20 @@ const Main = styled('div')(({ theme }) => ({
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMyInfos = async () => {
       const data = await getMyUserInfos(localStorage.getItem('token'));
+
+      if (data === null) {
+        localStorage.removeItem('token');
+        navigate('/login', { replace: true });
+      }
       setUser(data);
     };
     fetchMyInfos();
-  }, []);
+  }, [navigate]);
 
   return (
     <StyledRoot>

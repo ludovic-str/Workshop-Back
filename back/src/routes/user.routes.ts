@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { FastifyPluginOptions } from "fastify/types/plugin";
 import httpStatus from "http-status";
 
-import { UserServices } from "../services";
+import { SaleServices, UserServices } from "../services";
 import { FastifyPluginDoneFunction } from "../types/global.types";
 import { LoginBody, RegisterBody } from "../types/body/userRequestBody.types";
 import authentificationMiddleware from "../middlewares/authentification.middleware";
@@ -32,6 +32,17 @@ export default (
       const user = await UserServices.getOneUser(userInfos.id);
 
       res.status(httpStatus.OK).send(user);
+    }
+  );
+
+  instance.get(
+    "/sales",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: FastifyRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const sales = await SaleServices.getUserSales(userInfos.id);
+
+      res.status(httpStatus.OK).send(sales);
     }
   );
 

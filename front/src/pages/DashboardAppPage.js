@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
@@ -17,11 +18,28 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+// api
+import { getUserSales } from '../api/sales';
 
 // ----------------------------------------------------------------------
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+
+  const [sales, setSales] = useState([]);
+
+  useEffect(() => {
+    const fetchSales = async () => {
+      const token = localStorage.getItem('token');
+      const sales = await getUserSales(token);
+      setSales(sales);
+    };
+    fetchSales();
+  }, []);
+
+  const totalSales = sales.reduce((acc, sale) => acc + sale.amount, 0);
+  const averageSalingPrice = totalSales / sales.length;
+  const biggestSale = Math.max(...sales.map((sale) => sale.amount));
 
   return (
     <>
@@ -36,19 +54,34 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Total of sales amount" total={totalSales} icon={'ant-design:euro-circle-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary
+              title="Item Orders"
+              total={sales.length}
+              color="info"
+              icon={'ant-design:dashboard-filled'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary
+              title="Average Saling Price"
+              total={averageSalingPrice}
+              color="warning"
+              icon={'ant-design:signal-filled'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary
+              title="Biggest Sale"
+              total={biggestSale}
+              color="success"
+              icon={'ant-design:trophy-filled'}
+            />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

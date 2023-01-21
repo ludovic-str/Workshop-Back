@@ -7,6 +7,7 @@ import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
+import Iconify from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +46,11 @@ export default function ShopProductCard({ product }) {
             {status}
           </Label>
         )}
+        <Iconify
+          icon="eva:heart-outline"
+          sx={{ width: 16, height: 16, mr: 0.5, top: 16, left: 16, position: 'absolute', zIndex: 9 }}
+          style={{ color: 'red' }}
+        />
         <StyledProductImg alt={name} src={cover} />
       </Box>
 
