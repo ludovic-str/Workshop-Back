@@ -10,11 +10,11 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import RegisterPage from './pages/RegisterPage';
+import AddProductsPage from './pages/AddProductPage';
 
 // ----------------------------------------------------------------------
 
 export default function Router({ loggedIn }) {
-  console.log(loggedIn);
   const routes = useRoutes([
     {
       path: '/dashboard',
@@ -25,6 +25,7 @@ export default function Router({ loggedIn }) {
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'product/add', element: <AddProductsPage /> },
       ],
     },
     {

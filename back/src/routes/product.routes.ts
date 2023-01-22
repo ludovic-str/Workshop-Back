@@ -4,6 +4,13 @@ import httpStatus from "http-status";
 
 import { FastifyPluginDoneFunction } from "../types/global.types";
 import { ProductServices } from "../services";
+import authentificationMiddleware from "../middlewares/authentification.middleware";
+import { SecurityHelpers } from "../helpers";
+import { CreateProductRequestBody } from "../types/body/productRequestBody.types";
+
+type CreateProductRequest = FastifyRequest<{
+  Body: CreateProductRequestBody;
+}>;
 
 export default (
   instance: FastifyInstance,
@@ -15,6 +22,21 @@ export default (
 
     res.status(httpStatus.OK).send(products);
   });
+
+  instance.post(
+    "/",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: CreateProductRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const product = await ProductServices.createProduct(
+        req.body,
+        userInfos.id
+      );
+
+      res.status(httpStatus.CREATED).send(product);
+    }
+  );
+
   done();
 };
 

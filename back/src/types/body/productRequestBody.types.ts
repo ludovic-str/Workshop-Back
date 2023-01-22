@@ -1,8 +1,6 @@
-export interface ProductRequestBody {
+export interface CreateProductRequestBody {
   name: string;
-  price: number;
-  priceSale: number;
+  imageId: string;
+  price: string;
   color: string;
-  status: "SALE" | "NEW" | "REGULAR";
-  userId: string;
 }

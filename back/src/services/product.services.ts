@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { ProductRequestBody } from "../types/body/productRequestBody.types";
+import { CreateProductRequestBody } from "../types/body/productRequestBody.types";
 
 const prisma = new PrismaClient();
 
@@ -9,17 +9,19 @@ const getAllProducts = async () => {
   return products;
 };
 
-const createProduct = async (product: ProductRequestBody) => {
+const createProduct = async (
+  product: CreateProductRequestBody,
+  userId: number
+) => {
   const newProduct = await prisma.product.create({
     data: {
+      imageId: parseInt(product.imageId),
       name: product.name,
-      price: product.price,
-      priceSale: product.priceSale,
+      price: parseInt(product.price),
       color: product.color,
-      status: product.status,
       user: {
         connect: {
-          id: parseInt(product.userId),
+          id: userId,
         },
       },
     },

@@ -7,19 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ProductStatus {
-  REGULAR
-  SALE
-  NEW
-}
-
 model Product {
     id              Int      @id @default(autoincrement())
     name            String
+    imageId         Int
     price           Float
-    priceSale       Float
     color           String
-    status          ProductStatus
+    likes           Int      @default(0)
     createdAt       DateTime @default(now())
     updatedAt       DateTime @updatedAt
     user            User     @relation(fields: [userId], references: [id])
