@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { FastifyPluginOptions } from "fastify/types/plugin";
 import httpStatus from "http-status";
 
-import { SaleServices, UserServices } from "../services";
+import { ProductServices, SaleServices, UserServices } from "../services";
 import { FastifyPluginDoneFunction } from "../types/global.types";
 import { LoginBody, RegisterBody } from "../types/body/userRequestBody.types";
 import authentificationMiddleware from "../middlewares/authentification.middleware";
@@ -65,6 +65,17 @@ export default (
 
     res.status(httpStatus.OK).send(token);
   });
+
+  instance.get(
+    "/products",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: FastifyRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const products = await ProductServices.getProductsByUserId(userInfos.id);
+
+      res.status(httpStatus.OK).send(products);
+    }
+  );
 
   done();
 };

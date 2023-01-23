@@ -51,4 +51,51 @@ const getAllProducts = async () => {
   return data;
 };
 
-export { createProduct, getAllProducts };
+const getMyProducts = async (token) => {
+  const res = await fetch('http://localhost:8080/users/products', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'Access-Control-Allow-Origin': 'https://localhost:8080',
+      Authorization: token,
+    },
+  });
+
+  const data = await res.json();
+
+  if (res.status !== 200) {
+    toast.error(`${res.status}: ${data.message}`, {
+      autoClose: 2000,
+    });
+    return null;
+  }
+
+  return data;
+};
+
+const deleteProduct = async (token, productId) => {
+  console.log('deleteProduct', productId, token);
+  const res = await fetch(`http://localhost:8080/products/${productId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'Access-Control-Allow-Origin': 'https://localhost:8080',
+      Authorization: token,
+    },
+  });
+
+  const data = await res.json();
+
+  if (res.status !== 200) {
+    toast.error(`${res.status}: ${data.message}`, {
+      autoClose: 2000,
+    });
+    return null;
+  }
+
+  return data;
+};
+
+export { createProduct, getAllProducts, getMyProducts, deleteProduct };

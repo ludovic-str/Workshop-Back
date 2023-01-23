@@ -12,6 +12,12 @@ type CreateProductRequest = FastifyRequest<{
   Body: CreateProductRequestBody;
 }>;
 
+type DeleteProductRequest = FastifyRequest<{
+  Params: {
+    id: string;
+  };
+}>;
+
 export default (
   instance: FastifyInstance,
   _opts: FastifyPluginOptions,
@@ -34,6 +40,20 @@ export default (
       );
 
       res.status(httpStatus.CREATED).send(product);
+    }
+  );
+
+  instance.delete(
+    "/:id",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: DeleteProductRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const product = await ProductServices.deleteProduct(
+        req.params.id,
+        userInfos.id
+      );
+
+      res.status(httpStatus.OK).send(product);
     }
   );
 

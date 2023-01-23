@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { toast } from 'react-toastify';
 // @mui
 import { Container, Stack, Typography, TextField, FormControl } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -17,22 +18,18 @@ const AddProductsPage = () => {
   const colorRgx = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
 
   const handleImageChange = (event) => {
-    console.log(event.target.value);
     if (event.target.value > 0 && event.target.value < 25) setImageId(event.target.value);
   };
 
   const handleNameChange = (event) => {
-    console.log(event.target.value);
     setName(event.target.value);
   };
 
   const handlePriceChange = (event) => {
-    console.log(event.target.value);
     if (event.target.value > 0) setPrice(event.target.value);
   };
 
   const handleColorChange = (event) => {
-    console.log(event.target.value);
     setColor(event.target.value);
   };
 
@@ -42,6 +39,18 @@ const AddProductsPage = () => {
 
       const data = await createProduct(token, imageId, name, price, color);
       console.log('Create product', data);
+
+      if (data) {
+        setImageId(1);
+        setName('');
+        setPrice(1);
+        setColor('');
+
+        toast.success('Product created', {
+          position: 'top-right',
+          autoClose: 2000,
+        });
+      }
     }
   };
 

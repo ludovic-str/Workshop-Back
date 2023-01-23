@@ -39,7 +39,11 @@ export default function DashboardAppPage() {
 
   const totalSales = sales.reduce((acc, sale) => acc + sale.amount, 0);
   const averageSalingPrice = totalSales / sales.length;
-  const biggestSale = Math.max(...sales.map((sale) => sale.amount));
+  let biggestSale = Math.max(...sales.map((sale) => sale.amount));
+
+  biggestSale = biggestSale === -Infinity ? 0 : biggestSale;
+
+  console.log('totalSales', totalSales, 'averageSalingPrice', averageSalingPrice, 'biggestSale', biggestSale);
 
   return (
     <>

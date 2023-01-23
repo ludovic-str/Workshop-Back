@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
+import { toast } from 'react-toastify';
 // @mui
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
 import { fCurrency } from '../../../utils/formatNumber';
+// api
+import { deleteProduct } from '../../../api/products';
 // components
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
@@ -21,20 +24,34 @@ const StyledProductImg = styled('img')({
 
 // ----------------------------------------------------------------------
 
-ShopProductCard.propTypes = {
+ManageProductCard.propTypes = {
   product: PropTypes.object,
+  setRefresh: PropTypes.func.isRequired,
 };
 
-export default function ShopProductCard({ product }) {
+export default function ManageProductCard({ product, setRefresh }) {
   const { id, name, imageId, price, color, likes } = product;
-  console.log(id, name, imageId, price, color, likes);
+
+  const onRemoveClick = async () => {
+    const token = localStorage.getItem('token');
+
+    const data = deleteProduct(token, id);
+
+    if (data) {
+      toast.success('Product deleted successfully', {
+        position: 'top-right',
+        autoClose: 2000,
+      });
+      setRefresh(true);
+    }
+  };
 
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
         <Label
           variant="filled"
-          color="info"
+          color="success"
           sx={{
             zIndex: 9,
             top: 16,
@@ -42,31 +59,15 @@ export default function ShopProductCard({ product }) {
             position: 'absolute',
             textTransform: 'uppercase',
           }}
-          style={{ cursor: 'pointer' }}
-          onClick={() => console.log('clicked')}
+          style={{ color: 'white' }}
         >
-          BUY
+          AVAILABLE
         </Label>
         <Iconify
           icon="eva:heart-outline"
           sx={{ width: 16, height: 16, mr: 0.5, top: 16, left: 16, position: 'absolute', zIndex: 9 }}
           style={{ color: 'red' }}
         />
-        <Label
-          variant="filled"
-          color="error"
-          sx={{
-            zIndex: 9,
-            top: 14,
-            left: 45,
-            position: 'absolute',
-            textTransform: 'uppercase',
-          }}
-          style={{ cursor: 'pointer' }}
-          onClick={() => console.log('clicked')}
-        >
-          {likes} likes
-        </Label>
         <StyledProductImg alt={name} src={`/assets/images/products/product_${imageId}.jpg`} />
       </Box>
 
@@ -76,6 +77,12 @@ export default function ShopProductCard({ product }) {
             {name}
           </Typography>
         </Link>
+        <Iconify
+          icon="eva:trash-2-outline"
+          style={{ color: 'red', cursor: 'pointer' }}
+          sx={{ width: 16, height: 16, mr: 0.5, bottom: 67, right: 16, position: 'absolute', zIndex: 9 }}
+          onClick={onRemoveClick}
+        />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           <ColorPreview colors={[color]} />

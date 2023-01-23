@@ -3,33 +3,32 @@ import { useState, useEffect } from 'react';
 // @mui
 import { Container, Stack, Typography } from '@mui/material';
 // components
-import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
+import { ProductSort, MyProductList, ProductFilterSidebar } from '../sections/@dashboard/products';
 // api
-import { getAllProducts } from '../api/products';
-import { getMyUserInfos } from '../api/auth';
+import { getMyProducts } from '../api/products';
 
 // ----------------------------------------------------------------------
 
-export default function ProductsPage() {
+export default function MyProductsPage() {
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
+  const [refresh, setRefresh] = useState(true);
 
   useEffect(() => {
-    const getProducts = async () => {
-      const token = localStorage.getItem('token');
-      const userData = await getMyUserInfos(token);
+    if (refresh) {
+      const getProducts = async () => {
+        const token = localStorage.getItem('token');
+        const myProducts = await getMyProducts(token);
 
-      if (!userData) return;
+        if (!myProducts) return;
 
-      const productData = await getAllProducts();
-      if (!productData) return;
+        setProducts(myProducts);
+      };
 
-      const displayProducts = productData.filter((product) => product.userId !== userData.id);
-      setProducts(displayProducts);
-    };
-
-    getProducts();
-  }, []);
+      getProducts();
+      setRefresh(false);
+    }
+  }, [refresh]);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -42,12 +41,12 @@ export default function ProductsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Products | Minimal UI </title>
+        <title> Dashboard: Manage Products | Minimal UI </title>
       </Helmet>
 
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Products
+          Manage Products
         </Typography>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
@@ -61,8 +60,7 @@ export default function ProductsPage() {
           </Stack>
         </Stack>
 
-        <ProductList products={products} />
-        <ProductCartWidget />
+        <MyProductList products={products} setRefresh={setRefresh} />
       </Container>
     </>
   );
