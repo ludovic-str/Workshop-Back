@@ -73,9 +73,88 @@ const deleteProduct = async (id: string, userId: number) => {
   return product;
 };
 
+const likeProduct = async (id: string, userId: number) => {
+  if (isNaN(parseInt(id))) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "id is not a number",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  await prisma.likedProduct.create({
+    data: {
+      productId: parseInt(id),
+      userId,
+    },
+  });
+
+  const products = await prisma.product.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      likes: {
+        increment: 1,
+      },
+    },
+  });
+
+  return products;
+};
+
+const dislikeProduct = async (id: string, userId: number) => {
+  if (isNaN(parseInt(id))) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "id is not a number",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  const toDelete = await prisma.likedProduct.findMany({
+    where: { userId, productId: parseInt(id) },
+  });
+
+  if (toDelete[0] === undefined) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "id is not a number",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  await prisma.likedProduct.delete({ where: { id: toDelete[0].id } });
+
+  const products = await prisma.product.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      likes: {
+        decrement: 1,
+      },
+    },
+  });
+
+  return products;
+};
+
+const getLikedProducts = async (userId: number) => {
+  const products = await prisma.likedProduct.findMany({ where: { userId } });
+
+  return products;
+};
+
 export default {
   getAllProducts,
   createProduct,
   getProductsByUserId,
   deleteProduct,
+  likeProduct,
+  getLikedProducts,
+  dislikeProduct,
 };

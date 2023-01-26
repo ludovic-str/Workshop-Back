@@ -18,6 +18,12 @@ type DeleteProductRequest = FastifyRequest<{
   };
 }>;
 
+type LikeProductRequest = FastifyRequest<{
+  Params: {
+    id: string;
+  };
+}>;
+
 export default (
   instance: FastifyInstance,
   _opts: FastifyPluginOptions,
@@ -49,6 +55,34 @@ export default (
     async (req: DeleteProductRequest, res: FastifyReply) => {
       const userInfos = SecurityHelpers.getUserInfos(req);
       const product = await ProductServices.deleteProduct(
+        req.params.id,
+        userInfos.id
+      );
+
+      res.status(httpStatus.OK).send(product);
+    }
+  );
+
+  instance.put(
+    "/:id/like",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: LikeProductRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const product = await ProductServices.likeProduct(
+        req.params.id,
+        userInfos.id
+      );
+
+      res.status(httpStatus.OK).send(product);
+    }
+  );
+
+  instance.put(
+    "/:id/dislike",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: LikeProductRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const product = await ProductServices.dislikeProduct(
         req.params.id,
         userInfos.id
       );

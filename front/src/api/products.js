@@ -98,4 +98,70 @@ const deleteProduct = async (token, productId) => {
   return data;
 };
 
-export { createProduct, getAllProducts, getMyProducts, deleteProduct };
+const likeProduct = async (token, productId) => {
+  const res = await fetch(`http://localhost:8080/products/${productId}/like`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Access-Control-Allow-Origin': 'https://localhost:8080',
+      Authorization: token,
+    },
+  });
+
+  const data = await res.json();
+
+  if (res.status !== 200) {
+    toast.error(`${res.status}: ${data.message}`, {
+      autoClose: 2000,
+    });
+    return null;
+  }
+
+  return data;
+};
+
+const getLikedProducts = async (token) => {
+  const res = await fetch('http://localhost:8080/users/products/liked', {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'Access-Control-Allow-Origin': 'https://localhost:8080',
+      Authorization: token,
+    },
+  });
+
+  const data = await res.json();
+
+  if (res.status !== 200) {
+    toast.error(`${res.status}: ${data.message}`, {
+      autoClose: 2000,
+    });
+    return null;
+  }
+
+  return data;
+};
+
+const dislikeProduct = async (token, productId) => {
+  const res = await fetch(`http://localhost:8080/products/${productId}/dislike`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Access-Control-Allow-Origin': 'https://localhost:8080',
+      Authorization: token,
+    },
+  });
+
+  const data = await res.json();
+
+  if (res.status !== 200) {
+    toast.error(`${res.status}: ${data.message}`, {
+      autoClose: 2000,
+    });
+    return null;
+  }
+
+  return data;
+};
+
+export { createProduct, getAllProducts, getMyProducts, deleteProduct, likeProduct, dislikeProduct, getLikedProducts };

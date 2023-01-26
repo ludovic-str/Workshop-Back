@@ -5,7 +5,7 @@ import { Container, Stack, Typography } from '@mui/material';
 // components
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
 // api
-import { getAllProducts } from '../api/products';
+import { getAllProducts, getLikedProducts } from '../api/products';
 import { getMyUserInfos } from '../api/auth';
 
 // ----------------------------------------------------------------------
@@ -13,6 +13,7 @@ import { getMyUserInfos } from '../api/auth';
 export default function ProductsPage() {
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
+  const [likedProducts, setLikedProducts] = useState([]);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -22,10 +23,12 @@ export default function ProductsPage() {
       if (!userData) return;
 
       const productData = await getAllProducts();
-      if (!productData) return;
+      const likedProducts = await getLikedProducts(token);
+      if (!productData || !likedProducts) return;
 
       const displayProducts = productData.filter((product) => product.userId !== userData.id);
       setProducts(displayProducts);
+      setLikedProducts(likedProducts);
     };
 
     getProducts();
@@ -61,7 +64,7 @@ export default function ProductsPage() {
           </Stack>
         </Stack>
 
-        <ProductList products={products} />
+        <ProductList products={products} likedProducts={likedProducts} />
         <ProductCartWidget />
       </Container>
     </>

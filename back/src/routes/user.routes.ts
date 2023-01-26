@@ -77,6 +77,17 @@ export default (
     }
   );
 
+  instance.get(
+    "/products/liked",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: FastifyRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const products = await ProductServices.getLikedProducts(userInfos.id);
+
+      res.status(httpStatus.OK).send(products);
+    }
+  );
+
   done();
 };
 
