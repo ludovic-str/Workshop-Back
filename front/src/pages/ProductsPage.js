@@ -26,7 +26,9 @@ export default function ProductsPage() {
       const likedProducts = await getLikedProducts(token);
       if (!productData || !likedProducts) return;
 
-      const displayProducts = productData.filter((product) => product.userId !== userData.id);
+      const displayProducts = productData.filter(
+        (product) => product.userId !== userData.id && product.status === 'AVAILABLE'
+      );
       setProducts(displayProducts);
       setLikedProducts(likedProducts);
     };

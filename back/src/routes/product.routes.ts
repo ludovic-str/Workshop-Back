@@ -24,6 +24,12 @@ type LikeProductRequest = FastifyRequest<{
   };
 }>;
 
+type BuyProductRequest = FastifyRequest<{
+  Params: {
+    id: string;
+  };
+}>;
+
 export default (
   instance: FastifyInstance,
   _opts: FastifyPluginOptions,
@@ -83,6 +89,20 @@ export default (
     async (req: LikeProductRequest, res: FastifyReply) => {
       const userInfos = SecurityHelpers.getUserInfos(req);
       const product = await ProductServices.dislikeProduct(
+        req.params.id,
+        userInfos.id
+      );
+
+      res.status(httpStatus.OK).send(product);
+    }
+  );
+
+  instance.put(
+    "/:id/buy",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: BuyProductRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const product = await ProductServices.buyProduct(
         req.params.id,
         userInfos.id
       );

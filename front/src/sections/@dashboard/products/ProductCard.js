@@ -10,7 +10,7 @@ import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
 import Iconify from '../../../components/iconify';
 // api
-import { dislikeProduct, likeProduct, dele } from '../../../api/products';
+import { dislikeProduct, likeProduct, buyProduct } from '../../../api/products';
 import { addSale } from '../../../api/sales';
 
 // ----------------------------------------------------------------------
@@ -31,7 +31,7 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product, likedProducts }) {
-  const { id, name, imageId, price, color, likes, userId } = product;
+  const { id, name, imageId, price, color, likes, userId, status } = product;
   const alreadyLiked = likedProducts.find((item) => item.productId === id);
 
   const [isLiked, setIsLiked] = useState(alreadyLiked !== undefined);
@@ -55,7 +55,7 @@ export default function ShopProductCard({ product, likedProducts }) {
     console.log('buy');
     const token = localStorage.getItem('token');
     await addSale(token, price, name, userId);
-
+    await buyProduct(token, id);
   };
 
   return (

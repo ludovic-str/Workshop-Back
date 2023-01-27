@@ -149,6 +149,43 @@ const getLikedProducts = async (userId: number) => {
   return products;
 };
 
+const buyProduct = async (id: string, userId: number) => {
+  if (isNaN(parseInt(id))) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "id is not a number",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  const product = await prisma.product.findUnique({
+    where: {
+      id: parseInt(id),
+    },
+  });
+
+  if (product === null) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "product not found",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  const soldProduct = await prisma.product.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      status: "SOLD",
+    },
+  });
+
+  return soldProduct;
+};
+
 export default {
   getAllProducts,
   createProduct,
@@ -157,4 +194,5 @@ export default {
   likeProduct,
   getLikedProducts,
   dislikeProduct,
+  buyProduct,
 };

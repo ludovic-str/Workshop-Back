@@ -30,7 +30,7 @@ ManageProductCard.propTypes = {
 };
 
 export default function ManageProductCard({ product, setRefresh }) {
-  const { id, name, imageId, price, color, likes } = product;
+  const { id, name, imageId, price, color, likes, status } = product;
 
   const onRemoveClick = async () => {
     const token = localStorage.getItem('token');
@@ -61,7 +61,7 @@ export default function ManageProductCard({ product, setRefresh }) {
           }}
           style={{ color: 'white' }}
         >
-          AVAILABLE
+          {status}  
         </Label>
         <Iconify
           icon="eva:heart-outline"
