@@ -16,6 +16,14 @@ type LoginRequest = FastifyRequest<{
   Body: LoginBody;
 }>;
 
+type CreateSaleRequest = FastifyRequest<{
+  Body: {
+    userId: number;
+    name: string;
+    amount: number;
+  };
+}>;
+
 export default (
   instance: FastifyInstance,
   _opts: FastifyPluginOptions,
@@ -85,6 +93,21 @@ export default (
       const products = await ProductServices.getLikedProducts(userInfos.id);
 
       res.status(httpStatus.OK).send(products);
+    }
+  );
+
+  instance.post(
+    "/sales",
+    { onRequest: [authentificationMiddleware()] },
+    async (req: CreateSaleRequest, res: FastifyReply) => {
+      const userInfos = SecurityHelpers.getUserInfos(req);
+      const sale = await SaleServices.createSale(
+        req.body.userId,
+        req.body.amount,
+        req.body.name
+      );
+
+      res.status(httpStatus.OK).send(sale);
     }
   );
 

@@ -9,7 +9,9 @@ import { fCurrency } from '../../../utils/formatNumber';
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
 import Iconify from '../../../components/iconify';
-import { dislikeProduct, likeProduct } from '../../../api/products';
+// api
+import { dislikeProduct, likeProduct, dele } from '../../../api/products';
+import { addSale } from '../../../api/sales';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +31,7 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product, likedProducts }) {
-  const { id, name, imageId, price, color, likes } = product;
+  const { id, name, imageId, price, color, likes, userId } = product;
   const alreadyLiked = likedProducts.find((item) => item.productId === id);
 
   const [isLiked, setIsLiked] = useState(alreadyLiked !== undefined);
@@ -40,15 +42,20 @@ export default function ShopProductCard({ product, likedProducts }) {
     const token = localStorage.getItem('token');
 
     if (isLiked) {
-      console.log('unlike');
       await dislikeProduct(token, id);
       setLikeCount(likeCount - 1);
     } else {
-      console.log('like');
       await likeProduct(token, id);
       setLikeCount(likeCount + 1);
     }
     setIsLiked(!isLiked);
+  };
+
+  const handleBuy = async () => {
+    console.log('buy');
+    const token = localStorage.getItem('token');
+    await addSale(token, price, name, userId);
+
   };
 
   return (
@@ -65,7 +72,7 @@ export default function ShopProductCard({ product, likedProducts }) {
             textTransform: 'uppercase',
           }}
           style={{ cursor: 'pointer' }}
-          onClick={() => console.log('clicked')}
+          onClick={handleBuy}
         >
           BUY
         </Label>

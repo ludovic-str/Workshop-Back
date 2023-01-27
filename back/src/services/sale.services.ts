@@ -12,6 +12,19 @@ const getUserSales = async (userId: number) => {
   return sales;
 };
 
+const createSale = async (userId: number, amount: number, name: string) => {
+  const sale = await prisma.sale.create({
+    data: {
+      userId,
+      amount,
+      name,
+    },
+  });
+
+  return sale;
+};
+
 export default {
   getUserSales,
+  createSale,
 };

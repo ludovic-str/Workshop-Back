@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum STATUS {
+  AVAILABLE
+  SOLD
+}
+
 model LikedProduct {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -23,6 +28,7 @@ model Product {
   imageId   Int
   price     Float
   color     String
+  status    STATUS   @default(AVAILABLE)
   likes     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
