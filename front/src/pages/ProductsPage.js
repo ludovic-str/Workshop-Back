@@ -14,27 +14,31 @@ export default function ProductsPage() {
   const [openFilter, setOpenFilter] = useState(false);
   const [products, setProducts] = useState([]);
   const [likedProducts, setLikedProducts] = useState([]);
+  const [refresh, setRefresh] = useState(true);
 
   useEffect(() => {
-    const getProducts = async () => {
-      const token = localStorage.getItem('token');
-      const userData = await getMyUserInfos(token);
+    if (refresh) {
+      const getProducts = async () => {
+        const token = localStorage.getItem('token');
+        const userData = await getMyUserInfos(token);
 
-      if (!userData) return;
+        if (!userData) return;
 
-      const productData = await getAllProducts();
-      const likedProducts = await getLikedProducts(token);
-      if (!productData || !likedProducts) return;
+        const productData = await getAllProducts();
+        const likedProducts = await getLikedProducts(token);
+        if (!productData || !likedProducts) return;
 
-      const displayProducts = productData.filter(
-        (product) => product.userId !== userData.id && product.status === 'AVAILABLE'
-      );
-      setProducts(displayProducts);
-      setLikedProducts(likedProducts);
-    };
+        const displayProducts = productData.filter(
+          (product) => product.userId !== userData.id && product.status === 'AVAILABLE'
+        );
+        setProducts(displayProducts);
+        setLikedProducts(likedProducts);
+      };
+      getProducts();
+    }
 
-    getProducts();
-  }, []);
+    setRefresh(false);
+  }, [refresh]);
 
   const handleOpenFilter = () => {
     setOpenFilter(true);
@@ -66,7 +70,7 @@ export default function ProductsPage() {
           </Stack>
         </Stack>
 
-        <ProductList products={products} likedProducts={likedProducts} />
+        <ProductList products={products} likedProducts={likedProducts} setRefresh={setRefresh} />
         <ProductCartWidget />
       </Container>
     </>

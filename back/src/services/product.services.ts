@@ -52,6 +52,12 @@ const deleteProduct = async (id: string, userId: number) => {
     });
   }
 
+  await prisma.likedProduct.deleteMany({
+    where: {
+      productId: parseInt(id),
+    },
+  });
+
   const product = await prisma.product.delete({
     where: {
       id: parseInt(id),

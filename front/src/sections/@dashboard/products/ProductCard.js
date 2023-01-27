@@ -28,10 +28,11 @@ const StyledProductImg = styled('img')({
 ShopProductCard.propTypes = {
   product: PropTypes.object,
   likedProducts: PropTypes.array.isRequired,
+  setRefresh: PropTypes.func.isRequired,
 };
 
-export default function ShopProductCard({ product, likedProducts }) {
-  const { id, name, imageId, price, color, likes, userId, status } = product;
+export default function ShopProductCard({ product, likedProducts, setRefresh }) {
+  const { id, name, imageId, price, color, likes, userId } = product;
   const alreadyLiked = likedProducts.find((item) => item.productId === id);
 
   const [isLiked, setIsLiked] = useState(alreadyLiked !== undefined);
@@ -56,6 +57,7 @@ export default function ShopProductCard({ product, likedProducts }) {
     const token = localStorage.getItem('token');
     await addSale(token, price, name, userId);
     await buyProduct(token, id);
+    setRefresh(true);
   };
 
   return (

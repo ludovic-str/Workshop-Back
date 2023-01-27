@@ -51,7 +51,7 @@ export default function ManageProductCard({ product, setRefresh }) {
       <Box sx={{ pt: '100%', position: 'relative' }}>
         <Label
           variant="filled"
-          color="success"
+          color={status === 'AVAILABLE' ? 'success' : 'error'}
           sx={{
             zIndex: 9,
             top: 16,
@@ -61,13 +61,26 @@ export default function ManageProductCard({ product, setRefresh }) {
           }}
           style={{ color: 'white' }}
         >
-          {status}  
+          {status}
         </Label>
         <Iconify
           icon="eva:heart-outline"
           sx={{ width: 16, height: 16, mr: 0.5, top: 16, left: 16, position: 'absolute', zIndex: 9 }}
           style={{ color: 'red' }}
         />
+        <Label
+          variant="filled"
+          color="error"
+          sx={{
+            zIndex: 9,
+            top: 14,
+            left: 45,
+            position: 'absolute',
+            textTransform: 'uppercase',
+          }}
+        >
+          {likes} likes
+        </Label>
         <StyledProductImg alt={name} src={`/assets/images/products/product_${imageId}.jpg`} />
       </Box>
 
