@@ -1,10 +1,14 @@
 import { Helmet } from 'react-helmet-async';
+import { toast } from 'react-toastify';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
 // hooks
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useResponsive from '../hooks/useResponsive';
+// api
+import { getGoogleAuthUrl, connectGoogleAccount } from '../api/oauth';
 // components
 import Logo from '../components/logo';
 import Iconify from '../components/iconify';
@@ -44,10 +48,35 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
   const navigate = useNavigate();
+  const [oauthLink, setOauthLink] = useState('');
 
   const handleNavigate = () => {
     navigate('/register', { replace: true });
   };
+
+  useEffect(() => {
+    const connectGoogleOauth = async () => {
+      const queryParameters = new URLSearchParams(window.location.search);
+      const code = queryParameters.get('code');
+      if (code) {
+        const data = await connectGoogleAccount(code);
+        if (data) {
+          localStorage.setItem('token', data.token);
+          toast.success('Account created successfully', {
+            autoClose: 2000,
+          });
+          navigate('/dashboard', { replace: true });
+        }
+      }
+    };
+
+    const getOauthLink = async () => {
+      const data = await getGoogleAuthUrl();
+      setOauthLink(data);
+    };
+    connectGoogleOauth();
+    getOauthLink();
+  }, [navigate]);
 
   return (
     <>
@@ -87,7 +116,7 @@ export default function LoginPage() {
             </Typography>
 
             <Stack direction="row" spacing={2}>
-              <Button fullWidth size="large" color="inherit" variant="outlined">
+              <Button fullWidth size="large" color="inherit" variant="outlined" href={oauthLink}>
                 <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
               </Button>
 

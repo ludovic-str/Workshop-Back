@@ -3,8 +3,11 @@ import { Helmet } from 'react-helmet-async';
 import { styled } from '@mui/material/styles';
 import { Link, Container, Typography, Divider, Stack, Button } from '@mui/material';
 // hooks
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useResponsive from '../hooks/useResponsive';
+// api
+import { getGoogleAuthUrl } from '../api/oauth';
 // components
 import Logo from '../components/logo';
 import Iconify from '../components/iconify';
@@ -44,10 +47,21 @@ const StyledContent = styled('div')(({ theme }) => ({
 export default function RegisterPage() {
   const mdUp = useResponsive('up', 'md');
   const navigate = useNavigate();
+  const [oauthLink, setOauthLink] = useState('');
 
   const handleNavigate = () => {
     navigate('/login', { replace: true });
   };
+
+  useEffect(() => {
+    const getOauthLink = async () => {
+      const data = await getGoogleAuthUrl();
+      if (!data) return;
+      console.log(data);
+      setOauthLink(data);
+    };
+    getOauthLink();
+  }, []);
 
   return (
     <>
@@ -87,7 +101,7 @@ export default function RegisterPage() {
             </Typography>
 
             <Stack direction="row" spacing={2}>
-              <Button fullWidth size="large" color="inherit" variant="outlined">
+              <Button fullWidth size="large" color="inherit" variant="outlined" href={oauthLink}>
                 <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
               </Button>
 

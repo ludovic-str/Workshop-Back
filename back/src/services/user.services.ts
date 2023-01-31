@@ -85,4 +85,42 @@ const getOneUser = async (id: number) => {
   return user;
 };
 
-export default { createUser, loginUser, getOneUser };
+const connectOauthUser = async (
+  firstname: string | null,
+  lastname: string | null,
+  email: string | null,
+  id: string | null,
+  googleToken: string | null
+): Promise<Token> => {
+  if (!firstname || !email || !id || !googleToken) {
+    throw new ClientError({
+      name: "Invalid Credential",
+      message: "Invalid google account",
+      level: "warm",
+      status: httpStatus.BAD_REQUEST,
+    });
+  }
+
+  const userWithSameMail = await prisma.user.findFirst({ where: { email } });
+
+  if (userWithSameMail !== null) return await loginUser(email, id);
+
+  const hashedPassword = await bcrypt.hash(id, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      firstname,
+      lastname: lastname || "",
+      password: hashedPassword,
+    },
+  });
+
+  const exp = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
+
+  const token = jwt.sign({ id: user.id, email }, ENV.secret);
+
+  return { token };
+};
+
+export default { createUser, loginUser, getOneUser, connectOauthUser };
